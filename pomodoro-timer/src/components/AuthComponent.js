@@ -1,22 +1,18 @@
 // src/components/AuthComponent.js
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext'; // Ensure this path is correct
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const AuthComponent = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null); // State to hold error messages
     const { signIn } = useAuth();
+    const navigate = useNavigate(); // Initialize navigate
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(null); // Reset any previous error
-        const result = await signIn(email, password);
-
-        // Check if there was an error in signIn
-        if (result.error) {
-            setError(result.error.message);
-        }
+        await signIn(email, password);
+        navigate('/pomodoro'); // Navigate to Pomodoro Timer after login
     };
 
     return (
@@ -36,9 +32,8 @@ const AuthComponent = () => {
                 required
             />
             <button type="submit">Sign In</button>
-            {error && <p style={{ color: 'red' }}>{error}</p>} {/* Display error message */}
         </form>
     );
 };
 
-export default AuthComponent; // Ensure you have this line
+export default AuthComponent;
