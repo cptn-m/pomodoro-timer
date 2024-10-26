@@ -1,11 +1,14 @@
 // src/PomodoroTimer.js
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext'; // Import your Auth context
 import { supabase } from '../supabaseClient';
+import { useNavigate } from 'react-router-dom';
 
 const PomodoroTimer = () => {
     const [time, setTime] = useState(1500); // 25 minutes default
     const [isActive, setIsActive] = useState(false);
     const [isBreak, setIsBreak] = useState(false);
+    const { signOut } = useAuth(); // Destructure signOut from Auth context
 
     useEffect(() => {
         let interval = null;
@@ -26,6 +29,13 @@ const PomodoroTimer = () => {
         if (error) console.error('Error saving session:', error);
     };
 
+    const navigate = useNavigate(); // Add this line
+
+    const handleSignOut = async () => {
+        await signOut(); // Call the signOut function from Auth context
+        navigate('/'); // Redirect to the login page after sign out
+    };
+
     return (
         <div>
             <h1>{isBreak ? 'Break' : 'Work'} Timer</h1>
@@ -34,6 +44,7 @@ const PomodoroTimer = () => {
                 {isActive ? 'Pause' : 'Start'}
             </button>
             <button onClick={() => setTime(1500)}>Reset</button>
+            <button onClick={handleSignOut}>Sign Out</button> {/* Add Sign Out button */}
         </div>
     );
 };
